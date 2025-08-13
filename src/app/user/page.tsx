@@ -8,7 +8,7 @@ export default function UserPage() {
                     Submit Your Salary Details
                 </h1>
                 <p className="text-gray-600">
-                    Enter your salary information. If you've
+                    Enter your salary information. If you&apos;ve
                     submitted before, this will update your
                     existing record.
                 </p>

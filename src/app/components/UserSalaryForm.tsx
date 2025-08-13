@@ -9,7 +9,7 @@ import {
     User as UserIcon,
     Mail
 } from "lucide-react"
-import { ApiResponse, User, UserSalaryFormData } from "../types"
+import { ApiResponse, User, UserSalaryFormData, ApiError } from "../types"
 import { api, apiEndpoints } from "../lib/api"
 
 const UserSalaryForm: React.FC = () => {
@@ -32,7 +32,7 @@ const UserSalaryForm: React.FC = () => {
 
             toast.success(
                 response.data.message ||
-                    "Salary details submitted successfully!"
+                "Salary details submitted successfully!"
             )
 
             // Reset form
@@ -41,21 +41,26 @@ const UserSalaryForm: React.FC = () => {
                 email: "",
                 salary_local_currency: 0
             })
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error submitting salary:", error)
 
-            if (error.response?.data?.errors) {
-                // Handle validation errors
-                Object.values(error.response.data.errors)
-                    .flat()
-                    .forEach((errorMsg: any) => {
-                        toast.error(errorMsg)
-                    })
-            } else {
-                toast.error(
-                    error.response?.data?.message ||
+            if (error instanceof Error && 'response' in error) {
+                const apiError = error as ApiError
+                if (apiError.response?.data?.errors) {
+                    // Handle validation errors
+                    Object.values(apiError.response.data.errors)
+                        .flat()
+                        .forEach((errorMsg: unknown) => {
+                            toast.error(String(errorMsg))
+                        })
+                } else {
+                    toast.error(
+                        apiError.response?.data?.message ||
                         "An error occurred"
-                )
+                    )
+                }
+            } else {
+                toast.error("An error occurred")
             }
         } finally {
             setLoading(false)

@@ -36,3 +36,12 @@ export interface ApiResponse<T> {
     user?: User
     errors?: Record<string, string[]>
 }
+
+export interface ApiError {
+    response?: {
+        data?: {
+            message?: string
+            errors?: Record<string, string[]>
+        }
+    }
+}

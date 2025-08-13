@@ -12,7 +12,7 @@ import {
     Euro,
     Calculator
 } from "lucide-react"
-import { AdminUpdateData, ApiResponse, User } from "../types"
+import { AdminUpdateData, ApiResponse, User, ApiError } from "../types"
 import { api, apiEndpoints } from "../lib/api"
 
 const AdminDashboard: React.FC = () => {
@@ -35,7 +35,7 @@ const AdminDashboard: React.FC = () => {
                 ApiResponse<User[]>
             >(apiEndpoints.getAllSalaries)
             setUsers(response.data.data || [])
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error fetching users:", error)
             toast.error("Failed to load user data")
         } finally {
@@ -81,12 +81,12 @@ const AdminDashboard: React.FC = () => {
 
             setEditingUserId(null)
             setEditData({})
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error updating salary:", error)
-            toast.error(
-                error.response?.data?.message ||
-                    "Failed to update salary"
-            )
+            const errorMessage = error instanceof Error && 'response' in error
+                ? (error as ApiError).response?.data?.message || "Failed to update salary"
+                : "Failed to update salary"
+            toast.error(errorMessage)
         } finally {
             setSaving(false)
         }
@@ -167,7 +167,7 @@ const AdminDashboard: React.FC = () => {
 
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {editingUserId ===
-                                        user.id ? (
+                                            user.id ? (
                                             <input
                                                 type="number"
                                                 value={
@@ -193,12 +193,12 @@ const AdminDashboard: React.FC = () => {
                                                     .salary_detail
                                                     ?.salary_local_currency
                                                     ? Number(
-                                                          user
-                                                              .salary_detail
-                                                              .salary_local_currency
-                                                      ).toFixed(
-                                                          2
-                                                      )
+                                                        user
+                                                            .salary_detail
+                                                            .salary_local_currency
+                                                    ).toFixed(
+                                                        2
+                                                    )
                                                     : "0.00"}
                                             </span>
                                         )}
@@ -206,7 +206,7 @@ const AdminDashboard: React.FC = () => {
 
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {editingUserId ===
-                                        user.id ? (
+                                            user.id ? (
                                             <div className="flex items-center">
                                                 <Euro className="h-4 w-4 text-gray-400 mr-1" />
                                                 <input
@@ -235,12 +235,12 @@ const AdminDashboard: React.FC = () => {
                                                     .salary_detail
                                                     ?.salary_in_euros
                                                     ? Number(
-                                                          user
-                                                              .salary_detail
-                                                              .salary_in_euros
-                                                      ).toFixed(
-                                                          2
-                                                      )
+                                                        user
+                                                            .salary_detail
+                                                            .salary_in_euros
+                                                    ).toFixed(
+                                                        2
+                                                    )
                                                     : "0.00"}
                                             </span>
                                         )}
@@ -248,7 +248,7 @@ const AdminDashboard: React.FC = () => {
 
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {editingUserId ===
-                                        user.id ? (
+                                            user.id ? (
                                             <div className="flex items-center">
                                                 <Euro className="h-4 w-4 text-gray-400 mr-1" />
                                                 <input
@@ -277,12 +277,12 @@ const AdminDashboard: React.FC = () => {
                                                     .salary_detail
                                                     ?.commission
                                                     ? Number(
-                                                          user
-                                                              .salary_detail
-                                                              .commission
-                                                      ).toFixed(
-                                                          2
-                                                      )
+                                                        user
+                                                            .salary_detail
+                                                            .commission
+                                                    ).toFixed(
+                                                        2
+                                                    )
                                                     : "500.00"}
                                             </span>
                                         )}
@@ -296,19 +296,19 @@ const AdminDashboard: React.FC = () => {
                                                 .salary_detail
                                                 ?.displayed_salary
                                                 ? Number(
-                                                      user
-                                                          .salary_detail
-                                                          .displayed_salary
-                                                  ).toFixed(
-                                                      2
-                                                  )
+                                                    user
+                                                        .salary_detail
+                                                        .displayed_salary
+                                                ).toFixed(
+                                                    2
+                                                )
                                                 : "500.00"}
                                         </span>
                                     </td>
 
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         {editingUserId ===
-                                        user.id ? (
+                                            user.id ? (
                                             <div className="flex space-x-2">
                                                 <button
                                                     onClick={() =>
